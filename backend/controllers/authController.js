@@ -17,8 +17,16 @@ export const loginController = asyncHandler(async (req, res) => {
         .digest("base64url");
 
     const state = generateRandomString(32);
-    res.cookie("airtable_code_verifier", codeVerifier, { httpOnly: true });
-    res.cookie("airtable_state", state, { httpOnly: true });
+    res.cookie("airtable_code_verifier", codeVerifier, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
+    res.cookie("airtable_state", state, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None"
+    });
 
     const params = new URLSearchParams({
         client_id: process.env.AIRTABLE_CLIENT_ID,
