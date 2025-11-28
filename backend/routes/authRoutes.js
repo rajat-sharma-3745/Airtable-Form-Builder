@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { airtableCallback, airtableLogin } from "../controllers/authController.js";
+import { callbackController, loginController } from "../controllers/authController.js";
 
 
 const router = Router();
 
-router.get("/login", airtableLogin);
-router.get("/callback", airtableCallback);
+router.get("/login", loginController);
+router.get("/callback", callbackController);
 
 
 export default router

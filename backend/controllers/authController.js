@@ -1,16 +1,40 @@
-import { getAuthUrl } from "../config/airtable.js";
+import { AIRTABLE_AUTH_URL } from "../config/airtable.js";
 import User from "../models/User.js";
 import { exchangeCodeForTokens } from "../services/oauth.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendToken } from "../utils/feature.js";
 
-export const airtableLogin = asyncHandler(async (req, res) => {
-    const url = getAuthUrl(res);
+function generateRandomString(len = 64) {
+    return crypto.randomBytes(len).toString('base64url');
+}
+export const loginController = asyncHandler(async (req, res) => {
+    const codeVerifier = generateRandomString(64);
+    const codeChallenge = crypto
+        .createHash("sha256")
+        .update(codeVerifier)
+        .digest("base64url");
+
+    const state = generateRandomString(32);
+    res.cookie("airtable_code_verifier", codeVerifier, { httpOnly: true });
+    res.cookie("airtable_state", state, { httpOnly: true });
+
+    const params = new URLSearchParams({
+        client_id: process.env.AIRTABLE_CLIENT_ID,
+        redirect_uri: process.env.AIRTABLE_REDIRECT_URI,
+        response_type: "code",
+        code_challenge: codeChallenge,
+        code_challenge_method: "S256",
+        state: state,
+        scope: "schema.bases:read schema.bases:write data.records:read data.records:write user.email:read webhook:manage",
+    });
+
+    const url = `${AIRTABLE_AUTH_URL}?${params.toString()}`;
+
     res.json(url);
 })
 
-export const airtableCallback = asyncHandler(async (req, res, next) => {
+export const callbackController = asyncHandler(async (req, res, next) => {
     const { code } = req.query;
     const returnedState = req.query.state;
 
