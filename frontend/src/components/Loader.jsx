@@ -27,7 +27,7 @@ const Loader = () => {
             toast.success(data?.message)
             localStorage.setItem('user',JSON.stringify(data?.user))
             setUser(data?.user);
-            navigate(`${data?.url}`)
+            navigate('/')
 
            }
         }
