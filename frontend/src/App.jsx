@@ -28,7 +28,7 @@ function App() {
     {
       path: "/",
       element: (
-        <ProtectedRoute user={!user}>
+        <ProtectedRoute user={user}>
           <Layout />
         </ProtectedRoute>
       ),
