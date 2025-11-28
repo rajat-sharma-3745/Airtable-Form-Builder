@@ -20,6 +20,7 @@ export const loginController = asyncHandler(async (req, res) => {
     const state = generateRandomString(32);
     map.set('state', state)
     map.set('codeVerifier', codeVerifier)
+    console.log(map)
 
     const params = new URLSearchParams({
         client_id: process.env.AIRTABLE_CLIENT_ID,
