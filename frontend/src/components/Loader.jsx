@@ -13,18 +13,26 @@ const Loader = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    const { data } = axiosInstance.get(API_PATHS.AUTH.CALLBACK, {
-      params: {
-        code: searchParams.get("code"),
-        state: searchParams.get("state"),
-      },
-    });
-    if (data?.success) {
-      toast.success(data?.message);
-      localStorage.setItem("user", JSON.stringify(data?.user));
-      setUser(data?.user);
-      navigate("/");
+    async function fetchUser() {
+      
+      try {
+        const { data } = await axiosInstance.get(API_PATHS.AUTH.CALLBACK, {
+          params: {
+            code: searchParams.get("code"),
+            state: searchParams.get("state"),
+          },
+        });
+        if (data?.success) {
+          toast.success(data?.message);
+          localStorage.setItem("user", JSON.stringify(data?.user));
+          setUser(data?.user);
+          navigate("/");
+        }
+      } catch (error) {
+        toast.error('Error while logging in')
+      }
     }
+    fetchUser();
   }, [searchParams]);
 
   return (
