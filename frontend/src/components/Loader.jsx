@@ -1,18 +1,16 @@
 import React from 'react'
 
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 
 const Loader = () => {
-    // const {navigate} = useAppContext();
-    const {nextUrl} = useParams();
+   const [searchParams,setSearchParams] = useSearchParams();
+
 
 
     useEffect(()=>{
-        if(nextUrl){
-            setTimeout(()=>navigate(`/${nextUrl}`),8000)
-        }
-    },[nextUrl])
+         console.log(searchParams)
+    },[])
 
   return (
     <div className='flex justify-center items-center h-screen'>
