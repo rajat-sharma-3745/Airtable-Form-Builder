@@ -5,8 +5,9 @@ import cookieParser from 'cookie-parser'
 import authRoutes from './routes/authRoutes.js'
 import formRoutes from './routes/formRoutes.js'
 import responseRoutes from './routes/responseRoutes.js'
-import webhookRoutes from './routes/webhookRoutes.js'
 import { connectDb } from './config/db.js';
+import { errorMiddleware } from './middlewares/error.js'
+import { webhookHanlder } from './controllers/webhookController.js'
 
 const app = express();
 
@@ -15,19 +16,24 @@ app.use(cors({
     credentials: true
 }))
 
-app.use(express.json());
+
 app.use(cookieParser());
+app.post("/webhooks/airtable", express.raw({ type: "application/json" }),webhookHanlder);
+
+app.use(express.json());
 
 
 app.use("/auth/airtable", authRoutes);
 app.use("/forms", formRoutes);
 app.use("/responses", responseRoutes);
-app.use("/webhooks/airtable", webhookRoutes);
+
 
 
 app.get("/", (req, res) => {
     res.send("Airtable MERN backend is running");
 });
+
+app.use(errorMiddleware)
 
 const PORT = process.env.PORT || 5000;
 

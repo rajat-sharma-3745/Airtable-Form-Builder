@@ -1,0 +1,40 @@
+import Response from "../models/Response.js";
+import Webhook from "../models/Webhook.js";
+import { verifyWebhook } from "../services/webhook.js";
+import { ApiError } from "../utils/apiError";
+import { asyncHandler } from "../utils/asyncHandler.js";
+
+export const webhookHanlder = asyncHandler(async (req, res, next) => {
+    const webhookId = req.headers['x-airtable-webhook-id'];
+    const webhook = await Webhook.findOne({ webhookId });
+    if (!webhook) return next(new ApiError('Unknown webhook', 400));
+
+    const isValid = verifyWebhook(webhook.webhookSecret, req);
+
+    if (!isValid) return next(new ApiError('Invalid signature', 401));
+
+    const body = JSON.parse(req.body.toString());
+
+    for (const payload of body.payloads) {
+        const { updated = [], destroyed = [] } =
+            payload.records || {};
+
+        for (const rec of updated) {
+            await Response.findOneAndUpdate(
+                { airtableRecordId: rec.id },
+                {
+                    answers: rec.fields,
+                    updatedAt: new Date()
+                }
+            );
+        }
+
+        for (const recordId of destroyed) {
+            await Response.findOneAndUpdate(
+                { airtableRecordId: recordId },
+                { deletedInAirtable: true }
+            );
+        }
+    }
+    res.json({ ok: true })
+})
