@@ -20,7 +20,6 @@ export {
     AIRTABLE_TOKEN_URL,
     AIRTABLE_API_BASE,
     AIRTABLE_META_BASE,
-    getAuthUrl,
     airtableClient
 
 };

@@ -41,7 +41,7 @@ export const callbackController = asyncHandler(async (req, res, next) => {
     console.log(code)
 
     if (!code) return next(new ApiError('Missing Code', 400));
-    console.log(req.cookies)
+    console.log(req.cookies.airtable_state)
 
     const codeVerifier = req.cookies.airtable_code_verifier;
     const savedState = req.cookies.airtable_state;
