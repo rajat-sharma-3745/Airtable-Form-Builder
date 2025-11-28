@@ -28,7 +28,8 @@ function getAuthUrl(res) {
         response_type: "code",
         code_challenge: codeChallenge,
         code_challenge_method: "S256",
-        state: state
+        state: state,
+        scope: "schema.bases:read data.records:read data.records:write",
     });
 
     return `${AIRTABLE_AUTH_URL}?${params.toString()}`;
