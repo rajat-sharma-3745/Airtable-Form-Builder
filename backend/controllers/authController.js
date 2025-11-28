@@ -39,7 +39,7 @@ export const loginController = asyncHandler(async (req, res) => {
 export const callbackController = asyncHandler(async (req, res, next) => {
     const { code } = req.query;
     const returnedState = req.query.state;
-
+    console.log(map)
 
     if (!code) return next(new ApiError('Missing Code', 400));
 
