@@ -1,7 +1,7 @@
 import axios from "axios";
 import { AIRTABLE_TOKEN_URL } from "../config/airtable.js";
 
-export async function exchangeCodeForTokens(code, redirectUri, clientId, clientSecret) {
+export async function exchangeCodeForTokens(code, redirectUri, clientId, clientSecret,codeVerifier) {
   const url = AIRTABLE_TOKEN_URL;
 
   const params = new URLSearchParams({
@@ -9,7 +9,8 @@ export async function exchangeCodeForTokens(code, redirectUri, clientId, clientS
     code,
     client_id: clientId,
     client_secret: clientSecret,
-    redirect_uri: redirectUri
+    redirect_uri: redirectUri,
+    code_verifier: codeVerifier,
   });
 
   const {data} = await axios.post(url, params);
