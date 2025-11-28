@@ -7,7 +7,7 @@ export async function exchangeCodeForTokens(code, redirectUri, clientId, clientS
 
   const credentials = Buffer
     .from(`${clientId}:${clientSecret}`)
-    .toString("base64url");
+    .toString("base64");
   const params = new URLSearchParams({
     grant_type: "authorization_code",
     code,
@@ -19,8 +19,8 @@ export async function exchangeCodeForTokens(code, redirectUri, clientId, clientS
 
   const { data } = await axios.post(url, params, {
     headers: {
-      Authorization: `Basic ${credentials}`,
-      "Content-Type": 'application/x-www-form-urlencoded'
+      "Content-Type": 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${credentials}`
     }
   });
 
