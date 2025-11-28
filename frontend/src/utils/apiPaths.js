@@ -1,0 +1,20 @@
+export const server = import.meta.env.VITE_BACKEND_URL;
+
+
+export const API_PATHS = {
+    AUTH: {
+        LOGIN: '/auth/airtable/login',
+    },
+    FORM: {
+        BASES: "/forms/bases",
+        TABLES: (baseId) => `/forms/${baseId}/tables`,
+        CREATE: "/forms",
+        GET_FORM: (formId) => `/forms/${formId}`,
+    },
+
+    RESPONSE: {
+        SUBMIT: (formId) => `/responses/${formId}/submit`,
+        LIST: (formId) => `/responses/${formId}/responses`,
+    },
+
+}
