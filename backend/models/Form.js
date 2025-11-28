@@ -5,8 +5,8 @@ const questionSchema = new mongoose.Schema({
     fieldId: String,
     label: String,
     type: String,
-    required: true,
-
+    required: Boolean,
+    options: [String],
     conditionalRules: {
         logic: { type: String, enum: ['AND', 'OR'], default: 'AND' },
         conditions: [
