@@ -5,7 +5,9 @@ export async function exchangeCodeForTokens(code, redirectUri, clientId, clientS
   const url = AIRTABLE_TOKEN_URL;
 
 
-  const credentials = `${clientId}:${clientSecret}`
+  const credentials = Buffer
+    .from(`${clientId}:${clientSecret}`)
+    .toString("base64url");
   const params = new URLSearchParams({
     grant_type: "authorization_code",
     code,
@@ -17,7 +19,8 @@ export async function exchangeCodeForTokens(code, redirectUri, clientId, clientS
 
   const { data } = await axios.post(url, params, {
     headers: {
-      Authorization: `Basic ${credentials}`
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": 'application/x-www-form-urlencoded'
     }
   });
 

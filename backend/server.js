@@ -21,6 +21,7 @@ app.use(cookieParser());
 app.post("/webhooks/airtable", express.raw({ type: "application/json" }),webhookHanlder);
 
 app.use(express.json());
+app.use(express.urlencoded());
 
 
 app.use("/auth/airtable", authRoutes);
