@@ -1,7 +1,7 @@
 import Response from "../models/Response.js";
 import Webhook from "../models/Webhook.js";
 import { verifyWebhook } from "../services/webhook.js";
-import { ApiError } from "../utils/apiError";
+import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const webhookHanlder = asyncHandler(async (req, res, next) => {

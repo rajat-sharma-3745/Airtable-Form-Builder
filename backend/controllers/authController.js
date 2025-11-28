@@ -12,6 +12,7 @@ export const airtableLogin = asyncHandler(async (req, res) => {
 
 export const airtableCallback = asyncHandler(async (req, res, next) => {
     const { code } = req.query;
+    console.log(code)
 
     if (!code) return next(new ApiError('Missing Code', 400));
     const { accessToken, refreshToken } = await exchangeCodeForTokens(
