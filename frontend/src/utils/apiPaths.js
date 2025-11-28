@@ -4,6 +4,7 @@ export const server = import.meta.env.VITE_BACKEND_URL;
 export const API_PATHS = {
     AUTH: {
         LOGIN: '/auth/airtable/login',
+        CALLBACK:`/auth/airtable/callback`
     },
     FORM: {
         BASES: "/forms/bases",

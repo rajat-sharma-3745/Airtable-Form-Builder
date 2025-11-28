@@ -2,6 +2,8 @@ import React from 'react'
 
 import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
+import axiosInstance from '../utils/axiosInstance';
+import { API_PATHS } from '../utils/apiPaths';
 
 const Loader = () => {
    const [searchParams,setSearchParams] = useSearchParams();
@@ -9,7 +11,16 @@ const Loader = () => {
 
 
     useEffect(()=>{
-         console.log(searchParams)
+        if(searchParams){
+          const [code,state] = [searchParams.get('code'),searchParams.get('state')]
+           const {data} = axiosInstance.get(API_PATHS.AUTH.CALLBACK,{
+            params:{
+              code:code,
+              state:state
+            }
+           })
+           if(data) console.log(data);
+        }
     },[])
 
   return (
