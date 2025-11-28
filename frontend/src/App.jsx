@@ -18,24 +18,24 @@ function App() {
       ),
     },
     {
-      path:'/loader',
+      path:'/',
       element:<Loader/>
     },
-    {
-      path: "/",
-      element: (
-        <ProtectedRoute user={user}>
-          <Layout />
-        </ProtectedRoute>
-      ),
-      children: [
-        {
-          path: "/",
-          element: <Dashboard />,
-        },
+    // {
+    //   path: "/",
+    //   element: (
+    //     <ProtectedRoute user={user}>
+    //       <Layout />
+    //     </ProtectedRoute>
+    //   ),
+    //   children: [
+    //     {
+    //       path: "/",
+    //       element: <Dashboard />,
+    //     },
        
-      ],
-    },
+    //   ],
+    // },
   ]);
   return <RouterProvider router={router} />;
 }
