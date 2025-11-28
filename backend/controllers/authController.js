@@ -6,6 +6,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendToken } from "../utils/feature.js";
 import crypto from 'crypto'
 
+let map = new Map()
 function generateRandomString(len = 64) {
     return crypto.randomBytes(len).toString('base64url');
 }
@@ -17,16 +18,8 @@ export const loginController = asyncHandler(async (req, res) => {
         .digest("base64url");
 
     const state = generateRandomString(32);
-    res.cookie("airtable_code_verifier", codeVerifier, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None"
-    });
-    res.cookie("airtable_state", state, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "None"
-    });
+    map.set(state, state)
+    map.set(codeVerifier, codeVerifier)
 
     const params = new URLSearchParams({
         client_id: process.env.AIRTABLE_CLIENT_ID,
@@ -47,13 +40,12 @@ export const callbackController = asyncHandler(async (req, res, next) => {
     const { code } = req.query;
     const returnedState = req.query.state;
 
-    console.log(code)
 
     if (!code) return next(new ApiError('Missing Code', 400));
-    console.log(req.cookies.airtable_state)
 
-    const codeVerifier = req.cookies.airtable_code_verifier;
-    const savedState = req.cookies.airtable_state;
+    const codeVerifier = map.get(codeVerifier);
+    const savedState = map.get(state)
+    console.log(savedState)
 
     if (returnedState !== savedState) {
         return res.status(400).json({ message: "Invalid state" });
@@ -87,8 +79,8 @@ export const callbackController = asyncHandler(async (req, res, next) => {
         user.refreshToken = refreshToken;
         await user.save();
     }
-    res.clearCookie("airtable_code_verifier");
-    res.clearCookie("airtable_state");
+    map.delete(state);
+    map.delete(codeVerifier)
     sendToken(res, user, 200, "Logged in successfully", '/dashboard');
 
 })
