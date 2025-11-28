@@ -4,6 +4,7 @@ import { exchangeCodeForTokens } from "../services/oauth.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { sendToken } from "../utils/feature.js";
+import crypto from 'crypto'
 
 function generateRandomString(len = 64) {
     return crypto.randomBytes(len).toString('base64url');
