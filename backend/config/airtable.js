@@ -6,10 +6,12 @@ const AIRTABLE_API_BASE = "https://api.airtable.com/v0";
 const AIRTABLE_META_BASE = "https://api.airtable.com/v0/meta";
 
 function getAuthUrl() {
+     const state = crypto.randomBytes(32).toString("base64url");
     const params = new URLSearchParams({
         client_id: process.env.AIRTABLE_CLIENT_ID,
         redirect_uri: process.env.AIRTABLE_REDIRECT_URI,
-        response_type: "code"
+        response_type: "code",
+        state:state
     });
 
     return `${AIRTABLE_AUTH_URL}?${params.toString()}`;
