@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 
 const Loader = () => {
   const {setUser} = useAppContext();
+  const navigate = useNavigate();
    const [searchParams,setSearchParams] = useSearchParams();
 
 
@@ -24,7 +25,10 @@ const Loader = () => {
            })
            if(data?.success) {
             toast.success(data?.message)
-            setUser(user);
+            localStorage.setItem('user',JSON.stringify(data?.user))
+            setUser(data?.user);
+            navigate(`${data?.url}`)
+
            }
         }
     },[])
