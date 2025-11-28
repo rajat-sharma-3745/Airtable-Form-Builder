@@ -18,8 +18,8 @@ export const loginController = asyncHandler(async (req, res) => {
         .digest("base64url");
 
     const state = generateRandomString(32);
-    map.set(state, state)
-    map.set(codeVerifier, codeVerifier)
+    map.set('state', state)
+    map.set('codeVerifier', codeVerifier)
 
     const params = new URLSearchParams({
         client_id: process.env.AIRTABLE_CLIENT_ID,
@@ -43,8 +43,8 @@ export const callbackController = asyncHandler(async (req, res, next) => {
 
     if (!code) return next(new ApiError('Missing Code', 400));
 
-    const codeVerifier = map.get(codeVerifier);
-    const savedState = map.get(state)
+    const codeVerifier = map.get('codeVerifier');
+    const savedState = map.get('state')
     console.log(savedState)
 
     if (returnedState !== savedState) {
@@ -79,8 +79,8 @@ export const callbackController = asyncHandler(async (req, res, next) => {
         user.refreshToken = refreshToken;
         await user.save();
     }
-    map.delete(state);
-    map.delete(codeVerifier)
+    map.delete('state');
+    map.delete('codeVerifier')
     sendToken(res, user, 200, "Logged in successfully", '/dashboard');
 
 })
