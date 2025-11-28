@@ -4,8 +4,11 @@ import { useSearchParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
+import { useAppContext } from '../Context/AppContext';
+import { toast } from 'sonner';
 
 const Loader = () => {
+  const {setUser} = useAppContext();
    const [searchParams,setSearchParams] = useSearchParams();
 
 
@@ -19,7 +22,10 @@ const Loader = () => {
               state:state
             }
            })
-           if(data) console.log(data);
+           if(data?.success) {
+            toast.success(data?.message)
+            setUser(user);
+           }
         }
     },[])
 
