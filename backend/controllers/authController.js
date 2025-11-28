@@ -78,7 +78,7 @@ export const callbackController = asyncHandler(async (req, res, next) => {
     if (!user) {
         user = await User.create({
             airtableUserId: profile.id,
-            name: profile.email,
+            name: profile?.name || profile.email?.split('@')[0] ,
             email: profile.email,
             accessToken,
             refreshToken

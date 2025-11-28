@@ -11,6 +11,7 @@ export const API_PATHS = {
         TABLES: (baseId) => `/forms/${baseId}/tables`,
         CREATE: "/forms",
         GET_FORM: (formId) => `/forms/${formId}`,
+        GETUSERFORMS:'/forms/user/all',
     },
 
     RESPONSE: {

@@ -5,6 +5,10 @@ import Login from "./pages/Login";
 import Layout from "./components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Loader from "./components/Loader";
+import FormBuilder from "./pages/FormBuilder";
+import MyForms from "./pages/MyForms";
+import FormView from "./pages/FormView";
+import ResponsesList from "./pages/ResponsesList";
 
 function App() {
    const { user } = useAppContext();
@@ -24,7 +28,7 @@ function App() {
     {
       path: "/",
       element: (
-        <ProtectedRoute user={user}>
+        <ProtectedRoute user={!user}>
           <Layout />
         </ProtectedRoute>
       ),
@@ -32,6 +36,22 @@ function App() {
         {
           path: "/",
           element: <Dashboard />,
+        },
+        {
+          path: "/form-builder/:baseId",
+          element: <FormBuilder />,
+        },
+        {
+          path: "/my-forms",
+          element: <MyForms />,
+        },
+        {
+          path: "/form/:formId",
+          element: <FormView />,
+        },
+        {
+          path: "/forms/:formId/responses",
+          element: <ResponsesList />,
         },
        
       ],

@@ -36,3 +36,12 @@ export const getForm = asyncHandler(async (req, res, next) => {
   if (!form) return next(new ApiError("Form not found", 404));
   res.json(form);
 })
+export const getUserForms = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const forms = await Form.find({ owner: userId })
+    .select("title airtableBaseId airtableTableId createdAt")
+    .sort({ createdAt: -1 });
+
+  res.json(forms);
+})
