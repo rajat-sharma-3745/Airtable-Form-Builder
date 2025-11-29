@@ -59,20 +59,19 @@ export const webhookHanlder = async (req, res, next) => {
   
   
   const tables = latest.changedTablesById || {};
-  console.log(tables)
   
   for (const tableId of Object.keys(tables)) {
     const tableChanges = tables[tableId];
   
-    console.log(tableChanges)
-   
-    for (const recordId of Object.keys(tableChanges.updatedRecordsById || {})) {
-      const rec = tableChanges.updatedRecordsById[recordId];
+    
+    for (const recordId of Object.keys(tableChanges.changedRecordsById || {})) {
+        const rec = tableChanges.changedRecordsById[recordId];
+        console.log(rec)
       console.log("Latest Updated:", recordId);
   
       await Response.findOneAndUpdate(
         { airtableRecordId: recordId },
-        { answers: rec.cellValuesByFieldId, updatedAt: new Date() }
+        { answers: rec.current.cellValuesByFieldId, updatedAt: new Date() }
       );
     }
   
@@ -81,7 +80,7 @@ export const webhookHanlder = async (req, res, next) => {
       console.log(" Latest Deleted:", recordId);
   
       await Response.findOneAndUpdate(
-        { airtableRecordId: recordId },
+        { airtableRecordId: recordId.current.cellValuesByFieldId },
         { deletedInAirtable: true }
       );
     }
