@@ -44,6 +44,7 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
         }
     );
    const payloads = data.payloads || [];
+   console.log(payloads)
 
 if (payloads.length === 0) {
   console.log("No payloads");
