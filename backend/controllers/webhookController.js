@@ -7,6 +7,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 export const webhookHanlder = asyncHandler(async (req, res, next) => {
     console.log('Webhook req came')
     const webhookId = req.headers['x-airtable-webhook-id'];
+    console.log(webhookId)
+    console.log(req.headers)
     const webhook = await Webhook.findOne({ webhookId });
     if (!webhook) return next(new ApiError('Unknown webhook', 400));
 
