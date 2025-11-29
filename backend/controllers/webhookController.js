@@ -25,7 +25,7 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
       const user = await User.findById(webhook?.userId)
 
       const sigHeader = req.headers["x-airtable-content-mac"];
-      const isValid = verifyAirtableSignature(
+      const isValid = verifyWebhook(
         webhook.webhookSecret,
         raw,
         sigHeader

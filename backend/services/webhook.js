@@ -39,7 +39,7 @@ export async function createWebhook(userId, accessToken, baseId, tableId) {
 }
 
 
-export function verifyAirtableSignature(macSecretBase64, rawBodyString, signatureHeader) {
+export function verifyWebhook(macSecretBase64, rawBodyString, signatureHeader) {
   if (!macSecretBase64 || !signatureHeader) return false;
 
   const macSecretDecoded = Buffer.from(macSecretBase64, "base64");
