@@ -6,7 +6,6 @@ import crypto from 'crypto'
 
 export async function createWebhook(userId, accessToken, baseId, tableId) {
    try {
-     console.log({userId,baseId,tableId,accessToken})
      const { data } = await axios.post(
          `https://api.airtable.com/v0/bases/${baseId}/webhooks`,
          {

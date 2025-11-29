@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import User from "../models/User.js";
 
 export const webhookHanlder = asyncHandler(async (req, res, next) => {
+    console.log('req came')
     res.status(200).end(); 
 
       const raw = req.body.toString();
