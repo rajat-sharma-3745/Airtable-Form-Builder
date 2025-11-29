@@ -6,9 +6,11 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const webhookHanlder = asyncHandler(async (req, res, next) => {
     console.log('Webhook req came')
-    const webhookId = req.headers['x-airtable-webhook-id'];
-    console.log(req.body.toString())
-    const webhook = await Webhook.findOne({ webhookId });
+    // const webhookId = req.headers['x-airtable-webhook-id'];
+    const webhook = await Webhook.findOne({ webhookId:req.body?.webhook?.id });
+    console.log(req.body.toString(),webhook)
+
+    res.json({ ok: true })
     if (!webhook) return next(new ApiError('Unknown webhook', 400));
 
     const isValid = verifyWebhook(webhook.webhookSecret, req);
