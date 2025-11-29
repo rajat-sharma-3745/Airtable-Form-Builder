@@ -41,8 +41,8 @@ export async function createWebhook(userId, accessToken, baseId, tableId) {
 
 export function verifyWebhook(secret, req) {
     const signature = req.headers["x-airtable-content-mac"];
-
     const hash = crypto.createHmac('sha256', Buffer.from(secret, 'base64')).update(req.body).digest('base64')
+    console.log(hash)
     return signature === hash;
 }
 

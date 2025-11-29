@@ -17,6 +17,7 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
     
     
     const isValid = verifyWebhook(webhook.webhookSecret, req);
+    console.log(isValid)
     if (!isValid) return next(new ApiError('Invalid signature', 401));
     
     console.log(body.payloads)
