@@ -1,4 +1,3 @@
-// src/components/FormSummary.jsx
 import React from "react";
 
 export default function FormSummary({ formTitle = "Untitled", questions = [] }) {

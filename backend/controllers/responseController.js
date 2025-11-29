@@ -1,6 +1,7 @@
 import Form from "../models/Form.js";
 import Response from "../models/Response.js";
 import User from "../models/User.js";
+import { createRecord } from "../services/airtable.js";
 import { shouldShowQuestion } from "../services/conditional.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -9,7 +10,7 @@ import { validateField } from "../utils/validator.js";
 export const submitForm = asyncHandler(async (req, res, next) => {
     const form = await Form.findById(req.params.formId);
     if (!form) return next(new ApiError("Form not found", 404));
-    const answers = req.body;
+    const {answers} = req.body;
 
 
     for (const q of form.questions) {
@@ -31,11 +32,13 @@ export const submitForm = asyncHandler(async (req, res, next) => {
     });
 
     const record = await createRecord(
-        user.accessToken,
-        form.airtableBaseId,
-        form.airtableTableId,
+        user?._id,
+        form.baseId,
+        form.tableId,
         airtableFields
     );
+
+  
 
     const response = await Response.create({
         formId: form._id,
@@ -43,7 +46,7 @@ export const submitForm = asyncHandler(async (req, res, next) => {
         answers
     });
 
-    res.json({ message: "Response saved", response });
+    res.json({ success:true,message: "Response saved", response });
 
 })
 

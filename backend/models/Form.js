@@ -20,12 +20,11 @@ const questionSchema = new mongoose.Schema({
 })
 
 const formSchema = new mongoose.Schema({
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    airtableBaseId: String,
-    airtableTableId: String,
-
-    title: String,
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User",required:true },
+    title: { type: String, required: true },
+    baseId: { type: String, required: true },
+    tableId: { type: String, required: true },
     questions: [questionSchema],
 }, { timestamps: true })
 
-export default mongoose.model('Form',formSchema);
+export default mongoose.model('Form', formSchema);

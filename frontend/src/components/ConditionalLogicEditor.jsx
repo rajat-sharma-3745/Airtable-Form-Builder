@@ -1,12 +1,5 @@
-// src/components/ConditionalLogicEditor.jsx
 import React, { useState } from "react";
 
-/**
- * Props:
- *  - question (the question being edited)
- *  - allQuestions (list of existing questions to reference)
- *  - onChange(rules) called with ConditionalRules or null
- */
 export default function ConditionalLogicEditor({ question, allQuestions, onChange }) {
   const [logic, setLogic] = useState(question.conditionalRules?.logic || "AND");
   const [conditions, setConditions] = useState(question.conditionalRules?.conditions || []);
@@ -20,7 +13,11 @@ export default function ConditionalLogicEditor({ question, allQuestions, onChang
   }
 
   function removeCondition(idx) {
-    setConditions(prev => prev.filter((c,i)=>i!==idx));
+    setConditions(prev =>{
+    const updated = prev.filter((_, i) => i !== idx);
+    onChange(updated.length ? { logic, conditions: updated } : null);
+    return updated;
+  });
   }
 
   function applyRules() {
@@ -64,8 +61,8 @@ export default function ConditionalLogicEditor({ question, allQuestions, onChang
         ))}
 
         <div className="flex items-center space-x-2 mt-2">
-          <button onClick={addCondition} className="px-3 py-1 bg-indigo-600 text-white rounded">Add Condition</button>
-          <button onClick={applyRules} className="px-3 py-1 bg-green-50 text-green-700 rounded">Apply</button>
+          <button onClick={addCondition} className="px-3 py-1 cursor-pointer bg-indigo-600 text-white rounded">Add Condition</button>
+          <button onClick={applyRules} className="px-3 py-1 cursor-pointer bg-green-50 text-green-700 rounded">Apply</button>
         </div>
       </div>
     </div>

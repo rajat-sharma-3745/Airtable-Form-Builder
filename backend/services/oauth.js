@@ -32,14 +32,22 @@ export async function exchangeCodeForTokens(code, redirectUri, clientId, clientS
 }
 
 export async function refreshAccessToken(refreshToken, clientId, clientSecret) {
+
+  const credentials = Buffer
+    .from(`${clientId}:${clientSecret}`)
+    .toString("base64");
   const params = new URLSearchParams({
     grant_type: "refresh_token",
     refresh_token: refreshToken,
-    client_id: clientId,
-    client_secret: clientSecret
+    client_id: clientId
   });
 
-  const { data } = await axios.post(AIRTABLE_TOKEN_URL, params);
+  const { data } = await axios.post(AIRTABLE_TOKEN_URL, params, {
+    headers: {
+      "Content-Type": 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${credentials}`
+    }
+  });
 
   return {
     accessToken: data.access_token,

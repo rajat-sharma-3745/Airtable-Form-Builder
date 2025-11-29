@@ -5,6 +5,7 @@ import ConditionalLogicEditor from "./ConditionalLogicEditor";
 export default function QuestionEditor({ question, onUpdate, onRemove, allQuestions }) {
   const [openCond, setOpenCond] = useState(false);
 
+
   const handleToggleRequired = () => {
     onUpdate(question.questionKey, { required: !question.required });
   };
@@ -18,13 +19,13 @@ export default function QuestionEditor({ question, onUpdate, onRemove, allQuesti
         </div>
 
         <div className="flex items-center space-x-2">
-          <button onClick={handleToggleRequired} className={`px-2 py-1 rounded text-sm ${question.required ? "bg-red-100 text-red-600" : "bg-green-50 text-green-700"}`}>
+          <button onClick={handleToggleRequired} className={`px-2 py-1 cursor-pointer rounded text-sm ${question.required ? "bg-red-100 text-red-600" : "bg-green-50 text-green-700"}`}>
             {question.required ? "Required" : "Optional"}
           </button>
 
-          <button onClick={() => setOpenCond(s => !s)} className="px-2 py-1 bg-yellow-50 text-yellow-700 rounded">Conditions</button>
+          <button onClick={() => setOpenCond(s => !s)} className="px-2 py-1 cursor-pointer bg-yellow-50 text-yellow-700 rounded">Conditions</button>
 
-          <button onClick={() => onRemove(question.questionKey)} className="px-2 py-1 bg-gray-100 rounded text-gray-700">Remove</button>
+          <button onClick={() => onRemove(question.questionKey)} className="px-2 py-1 cursor-pointer bg-gray-100 rounded text-gray-700">Remove</button>
         </div>
       </div>
 

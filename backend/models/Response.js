@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
 const responseSchema = new mongoose.Schema({
-    formId: { type: mongoose.Schema.Types.ObjectId, ref: "Form" },
-    airtableRecordId: String,
+    formId: { type: mongoose.Schema.Types.ObjectId, ref: "Form",required:true },
+    airtableRecordId: {type:String,required:true},
 
     answers: mongoose.Schema.Types.Mixed, 
 

@@ -9,6 +9,7 @@ export const API_PATHS = {
     FORM: {
         BASES: "/forms/bases",
         TABLES: (baseId) => `/forms/${baseId}/tables`,
+        TABLE_FIELDS: (baseId,tableId) => `/forms/${baseId}/tables/${tableId}/fields`,
         CREATE: "/forms",
         GET_FORM: (formId) => `/forms/${formId}`,
         GETUSERFORMS:'/forms/user/all',

@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken'
 
 export const sendToken = (res,user,code,message,url) => {
    const token = jwt.sign({id:user._id},process.env.JWT_SECRET, { expiresIn: "7d" });
-   console.log(token)
    return res.status(code).cookie('token',token,{
     httpOnly:true,
     secure:true,

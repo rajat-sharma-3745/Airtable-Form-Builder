@@ -1,44 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-export const dummyMyForms = [
-  {
-    _id: "form_001",
-    title: "Job Application Form",
-    airtableBaseId: "appBase123",
-    airtableTableId: "tblJobs001",
-    createdAt: "2025-02-20T10:30:00Z",
-    questions: [
-      { label: "Full Name", questionKey: "fullName", type: "shortText" },
-      { label: "Email", questionKey: "email", type: "shortText" },
-      { label: "Role", questionKey: "role", type: "singleSelect" }
-    ]
-  },
-  {
-    _id: "form_002",
-    title: "Feedback Survey",
-    airtableBaseId: "appBase567",
-    airtableTableId: "tblSurvey101",
-    createdAt: "2025-02-19T14:15:00Z",
-    questions: [
-      { label: "Your Thoughts", questionKey: "thoughts", type: "longText" },
-      { label: "Rating", questionKey: "rating", type: "singleSelect" }
-    ]
-  },
-  {
-    _id: "form_003",
-    title: "Event Registration",
-    airtableBaseId: "appBase999",
-    airtableTableId: "tblEvents999",
-    createdAt: "2025-02-18T09:45:00Z",
-    questions: [
-      { label: "Name", questionKey: "name", type: "shortText" },
-      { label: "Will Attend?", questionKey: "attend", type: "singleSelect" }
-    ]
-  }
-];
-
-
+import axiosInstance from "../utils/axiosInstance";
+import { API_PATHS } from "../utils/apiPaths";
 
 export default function MyForms() {
   const [forms, setForms] = useState([]);
@@ -49,8 +12,9 @@ export default function MyForms() {
   useEffect(() => {
     async function fetchForms() {
       try {
-        // const data = await getUserForms();
-        setForms(dummyMyForms);
+        setLoading(true)
+        const {data} = await axiosInstance.get(API_PATHS.FORM.GETUSERFORMS)
+        setForms(data);
       } catch (err) {
         setError("Failed to load your forms");
       } finally {
@@ -93,10 +57,10 @@ export default function MyForms() {
           >
             <h2 className="text-xl font-semibold text-gray-900">{form.title}</h2>
             <p className="text-gray-500 text-sm mt-2">
-              Base: {form.airtableBaseId}
+              Base: {form.baseId}
             </p>
             <p className="text-gray-500 text-sm mt-2">
-              Table: {form.airtableTableId}
+              Table: {form.tableId}
             </p>
              <p className="text-xs text-gray-400 mt-2">
               Created: {new Date(form.createdAt).toLocaleDateString()}
@@ -108,7 +72,7 @@ export default function MyForms() {
                 e.stopPropagation();
                 navigate(`/forms/${form._id}/responses`);
               }}
-              className="mt-4 w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
+              className="mt-4 w-full cursor-pointer bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
             >
               View Responses
             </button>

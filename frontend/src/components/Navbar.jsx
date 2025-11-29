@@ -15,10 +15,10 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center gap-8 text-white">
         <Link
-          to="/create"
+          to="/my-forms"
           className="cursor-pointer hover:underline transition-all"
         >
-          Create
+          My Forms
         </Link>
         <button
           onClick={logout}

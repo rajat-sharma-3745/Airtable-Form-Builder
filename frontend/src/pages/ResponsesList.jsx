@@ -1,44 +1,31 @@
-// src/pages/ResponsesList.jsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-
-export const dummyResponses = [
-  {
-    _id: "sub_001",
-    createdAt: "2025-02-10",
-    answers: {
-      name: "John Doe",
-      email: "john@example.com",
-      role: "Engineer",
-      github: "https://github.com/johndoe",
-    },
-  },
-  {
-    _id: "sub_002",
-    createdAt: "2025-02-11",
-    answers: {
-      name: "Sara Smith",
-      email: "sara@example.com",
-      role: "Designer",
-      github: null,
-    },
-  },
-];
+import axiosInstance from "../utils/axiosInstance";
+import { API_PATHS } from "../utils/apiPaths";
 
 export default function ResponsesList() {
   const { formId } = useParams();
   const [responses, setResponses] = useState([]);
+  const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     async function loadResponses() {
       try {
-        // const res = await getResponses(formId);
-        setResponses(dummyResponses);
+        setLoading(true);
+        const [form, response] = await Promise.all([
+          axiosInstance.get(API_PATHS.FORM.GET_FORM(formId)),
+          axiosInstance.get(API_PATHS.RESPONSE.LIST(formId)),
+        ]);
+        setForm(form.data);
+        setResponses(response?.data);
       } catch (err) {
-        setError("Unable to load responses.");
+        toast.error(
+          error?.response?.data?.message ||
+            error?.message ||
+            "Something went wrong"
+        );
       } finally {
         setLoading(false);
       }
@@ -55,9 +42,22 @@ export default function ResponsesList() {
   }
 
   if (error) {
-    return (
-      <div className="p-6 text-center text-red-500 text-xl">{error}</div>
-    );
+    return <div className="p-6 text-center text-red-500 text-xl">{error}</div>;
+  }
+
+  const labelMap = {};
+  if (form) {
+    form?.questions.forEach((q) => {
+      labelMap[q.questionKey] = q.label;
+    });
+  }
+  function renderAnswers(answers={}) {
+    return Object.entries(answers).map(([key, value]) => (
+      <div key={key} className="mb-1">
+        <span className="font-semibold">{labelMap[key] || key}:</span>{" "}
+        <span>{Array.isArray(value) ? value.join(", ") : value}</span>
+      </div>
+    ));
   }
 
   return (
@@ -87,11 +87,14 @@ export default function ResponsesList() {
                 Created: {new Date(res.createdAt).toLocaleString()}
               </p>
 
-              <div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 h-32 overflow-auto">
+              {res.hasOwnProperty('answers') ?<div className="bg-gray-50 p-3 rounded-md text-sm text-gray-700 h-32 overflow-auto">
                 <pre className="whitespace-pre-wrap text-xs">
-                  {JSON.stringify(res.answers, null, 2)}
+                  {renderAnswers(res?.answers)}
                 </pre>
-              </div>
+              </div>:(
+                <p>No answers</p>
+              )
+              }
             </div>
           ))}
         </div>
