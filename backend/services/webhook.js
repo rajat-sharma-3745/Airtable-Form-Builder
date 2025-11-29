@@ -5,56 +5,62 @@ import crypto from 'crypto'
 
 
 export async function createWebhook(userId, accessToken, baseId, tableId) {
-    const { data } = await axios.post(
-        `https://api.airtable.com/v0/bases/${baseId}/webhooks`,
-        {
-            notificationUrl: process.env.WEBHOOK_RECEIVER_URL,
-            specification: {
-                options: {
-                    filters: {
-                        dataTypes: ["tableData"],
-                        // tableId
-                    }
-                }
-            }
-        },
-        {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-            }
-        }
-    );
-
-    const webhook = await Webhook.create({
-        userId,
-        baseId,
-        tableId,
-        webhookId: data.id,
-        webhookSecret: data.macSecretBase64,
-        expirationTime: new Date(data.expirationTime),
-    });
-
-    return webhook;
+   try {
+     console.log({userId,baseId,tableId,accessToken})
+     const { data } = await axios.post(
+         `https://api.airtable.com/v0/bases/${baseId}/webhooks`,
+         {
+             notificationUrl: process.env.WEBHOOK_RECEIVER_URL,
+             specification: {
+                 options: {
+                     filters: {
+                         dataTypes: ["tableData"],
+                         recordChangeScope: tableId
+                         
+                     }
+                 }
+             }
+         },
+         {
+             headers: {
+                 Authorization: `Bearer ${accessToken}`,
+                 "Content-Type": "application/json",
+             }
+         }
+     );
+ 
+     const webhook = await Webhook.create({
+         userId,
+         baseId,
+         tableId,
+         webhookId: data.id,
+         webhookSecret: data.macSecretBase64,
+         expirationTime: new Date(data.expirationTime),
+     });
+ 
+     return webhook;
+   } catch (error) {
+      console.log(error?.response)
+   }
 }
 
 
 export function verifyWebhook(macSecretBase64, rawBodyString, signatureHeader) {
-  if (!macSecretBase64 || !signatureHeader) return false;
+    if (!macSecretBase64 || !signatureHeader) return false;
 
-  const macSecretDecoded = Buffer.from(macSecretBase64, "base64");
+    const macSecretDecoded = Buffer.from(macSecretBase64, "base64");
 
-  const body = Buffer.from(rawBodyString, "utf8");
+    const body = Buffer.from(rawBodyString, "utf8");
 
-  const hmac = crypto.createHmac("sha256", macSecretDecoded);
-  hmac.update(body.toString(), "ascii");
+    const hmac = crypto.createHmac("sha256", macSecretDecoded);
+    hmac.update(body.toString(), "ascii");
 
-  const expected = "hmac-sha256=" + hmac.digest("hex");
+    const expected = "hmac-sha256=" + hmac.digest("hex");
 
-  return crypto.timingSafeEqual(
-    Buffer.from(expected),
-    Buffer.from(signatureHeader)
-  );
+    return crypto.timingSafeEqual(
+        Buffer.from(expected),
+        Buffer.from(signatureHeader)
+    );
 }
 
 
