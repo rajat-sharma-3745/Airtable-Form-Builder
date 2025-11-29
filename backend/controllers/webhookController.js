@@ -8,7 +8,7 @@ import User from "../models/User.js";
 
 export const webhookHanlder = asyncHandler(async (req, res, next) => {
     console.log('req came')
-    
+    res.json(200).end()
     const raw = req.body.toString();
     const body = JSON.parse(raw);
     
@@ -43,28 +43,47 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
             headers: { Authorization: `Bearer ${user?.accessToken}` },
         }
     );
-    const {  payloads } = data;
-    console.log(data,payloads)
-    res.status(200).end(); 
+   const payloads = data.payloads || [];
 
-      for (const p of payloads) {
-        const {  updated = [], destroyed = [] } = p.records || {};
+if (payloads.length === 0) {
+  console.log("No payloads");
+  return;
+}
 
-        for (const rec of updated) {
-          await Response.findOneAndUpdate(
-            { airtableRecordId: rec.id },
-            { answers: rec.fields, updatedAt: new Date() }
-          );
-        }
 
-        for (const id of destroyed) {
-          await Response.findOneAndUpdate(
-            { airtableRecordId: id },
-            { deletedInAirtable: true }
-          );
-        }
-      }
+payloads.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-      
+
+const latest = payloads[payloads.length - 1];
+
+console.log("Processing latest payload:", latest.timestamp);
+
+
+const tables = latest.changedTablesById || {};
+
+for (const tableId of Object.keys(tables)) {
+  const tableChanges = tables[tableId];
+
+ 
+  for (const recordId of Object.keys(tableChanges.updatedRecordsById || {})) {
+    const rec = tableChanges.updatedRecordsById[recordId];
+    console.log("Latest Updated:", recordId);
+
+    await Response.findOneAndUpdate(
+      { airtableRecordId: recordId },
+      { answers: rec.cellValuesByFieldId, updatedAt: new Date() }
+    );
+  }
+
+
+  for (const recordId of tableChanges.destroyedRecordIds || []) {
+    console.log(" Latest Deleted:", recordId);
+
+    await Response.findOneAndUpdate(
+      { airtableRecordId: recordId },
+      { deletedInAirtable: true }
+    );
+  }
+}
     
 })
