@@ -46,7 +46,6 @@ export default function FormView() {
   const handleSubmit = async () => {
     try {
       const validation = validateForm(form.questions, answers);
-      console.log(validation,answers)
       if (!validation.ok) {
         toast.info(validation.message);
         return;
