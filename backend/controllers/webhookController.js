@@ -8,23 +8,24 @@ import User from "../models/User.js";
 
 export const webhookHanlder = asyncHandler(async (req, res, next) => {
     console.log('req came')
-    res.status(200).end(); 
-
-      const raw = req.body.toString();
-      const body = JSON.parse(raw);
-
-      const webhookId = body?.webhook?.id;
-      const baseId = body?.base?.id;
-
-      if (!webhookId || !baseId) {
+    
+    const raw = req.body.toString();
+    const body = JSON.parse(raw);
+    
+    const webhookId = body?.webhook?.id;
+    const baseId = body?.base?.id;
+    
+    if (!webhookId || !baseId) {
         console.log("Heartbeat ping");
         return;
-      }
-
-      const webhook = await Webhook.findOne({ webhookId });
-      if (!webhook) return;
-      const user = await User.findById(webhook?.userId)
-
+    }
+    
+    const webhook = await Webhook.findOne({ webhookId });
+    console.log(webhook,webhookId)
+    if (!webhook) return;
+    const user = await User.findById(webhook?.userId)
+    console.log(user)
+    res.status(200).end(); 
       const sigHeader = req.headers["x-airtable-content-mac"];
       const isValid = verifyWebhook(
         webhook.webhookSecret,
