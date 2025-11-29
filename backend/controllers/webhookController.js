@@ -25,27 +25,27 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
     if (!webhook) return;
     const user = await User.findById(webhook?.userId)
     console.log(user)
-    res.status(200).end(); 
-      const sigHeader = req.headers["x-airtable-content-mac"];
-      const isValid = verifyWebhook(
+    const sigHeader = req.headers["x-airtable-content-mac"];
+    const isValid = verifyWebhook(
         webhook.webhookSecret,
         raw,
         sigHeader
-      );
-
-      if (!isValid) {
+    );
+    
+    if (!isValid) {
         console.log("Invalid signature");
         return;
-      }
-
-      const {data} = await axios.get(
+    }
+    
+    const {data} = await axios.get(
         `https://api.airtable.com/v0/bases/${baseId}/webhooks/${webhookId}/payloads`,
         {
-          headers: { Authorization: `Bearer ${user?.accessToken}` },
+            headers: { Authorization: `Bearer ${user?.accessToken}` },
         }
-      );
-
-      const {  payloads } = data;
+    );
+    const {  payloads } = data;
+    console.log(data,payloads)
+    res.status(200).end(); 
 
       for (const p of payloads) {
         const {  updated = [], destroyed = [] } = p.records || {};
