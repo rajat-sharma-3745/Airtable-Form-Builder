@@ -9,6 +9,7 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
     // const webhookId = req.headers['x-airtable-webhook-id'];
     
     const body = JSON.parse(req.body.toString());
+    console.log(body)
     const webhook = await Webhook.findOne({ webhookId:body?.webhook?.id });
     console.log(req.body.toString(),webhook)
 
@@ -41,5 +42,5 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
             );
         }
     }
-    res.json({ ok: true })
+    // res.json({ ok: true })
 })
