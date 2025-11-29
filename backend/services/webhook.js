@@ -39,11 +39,22 @@ export async function createWebhook(userId, accessToken, baseId, tableId) {
 }
 
 
-export function verifyWebhook(secret, req) {
-    const signature = req.headers["x-airtable-content-mac"];
-    const hash = crypto.createHmac('sha256', Buffer.from(secret, 'base64')).update(req.body).digest('base64')
-    console.log(hash)
-    return signature === hash;
+export function verifyAirtableSignature(macSecretBase64, rawBodyString, signatureHeader) {
+  if (!macSecretBase64 || !signatureHeader) return false;
+
+  const macSecretDecoded = Buffer.from(macSecretBase64, "base64");
+
+  const body = Buffer.from(rawBodyString, "utf8");
+
+  const hmac = crypto.createHmac("sha256", macSecretDecoded);
+  hmac.update(body.toString(), "ascii");
+
+  const expected = "hmac-sha256=" + hmac.digest("hex");
+
+  return crypto.timingSafeEqual(
+    Buffer.from(expected),
+    Buffer.from(signatureHeader)
+  );
 }
 
 

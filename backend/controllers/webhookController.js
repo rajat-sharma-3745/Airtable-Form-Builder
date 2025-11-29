@@ -1,47 +1,68 @@
+import axios from "axios";
 import Response from "../models/Response.js";
 import Webhook from "../models/Webhook.js";
 import { verifyWebhook } from "../services/webhook.js";
 import { ApiError } from "../utils/apiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import User from "../models/User.js";
 
 export const webhookHanlder = asyncHandler(async (req, res, next) => {
-    console.log('Webhook req came')
-    // const webhookId = req.headers['x-airtable-webhook-id'];
-    
-    const body = JSON.parse(req.body.toString());
-    console.log(body)
-    const webhook = await Webhook.findOne({ webhookId:body?.webhook?.id });
-    console.log(req.body.toString(),webhook)
+    res.status(200).end(); 
 
-    if (!webhook) return next(new ApiError('Unknown webhook', 400));
-    
-    
-    const isValid = verifyWebhook(webhook.webhookSecret, req);
-    console.log(isValid)
-    if (!isValid) return next(new ApiError('Invalid signature', 401));
-    
-    console.log(body.payloads)
-    res.json({ ok: true })
-    for (const payload of body.payloads) {
-        const { updated = [], destroyed = [] } =
-            payload.records || {};
+      const raw = req.body.toString();
+      const body = JSON.parse(raw);
+
+      const webhookId = body?.webhook?.id;
+      const baseId = body?.base?.id;
+
+      if (!webhookId || !baseId) {
+        console.log("Heartbeat ping");
+        return;
+      }
+
+      const webhook = await Webhook.findOne({ webhookId });
+      if (!webhook) return;
+      const user = await User.findById(webhook?.userId)
+
+      const sigHeader = req.headers["x-airtable-content-mac"];
+      const isValid = verifyAirtableSignature(
+        webhook.webhookSecret,
+        raw,
+        sigHeader
+      );
+
+      if (!isValid) {
+        console.log("Invalid signature");
+        return;
+      }
+
+      const {data} = await axios.get(
+        `https://api.airtable.com/v0/bases/${baseId}/webhooks/${webhookId}/payloads`,
+        {
+          headers: { Authorization: `Bearer ${user?.accessToken}` },
+        }
+      );
+
+      const {  payloads } = data;
+
+      for (const p of payloads) {
+        const {  updated = [], destroyed = [] } = p.records || {};
 
         for (const rec of updated) {
-            await Response.findOneAndUpdate(
-                { airtableRecordId: rec.id },
-                {
-                    answers: rec.fields,
-                    updatedAt: new Date()
-                }
-            );
+          await Response.findOneAndUpdate(
+            { airtableRecordId: rec.id },
+            { answers: rec.fields, updatedAt: new Date() }
+          );
         }
 
-        for (const recordId of destroyed) {
-            await Response.findOneAndUpdate(
-                { airtableRecordId: recordId },
-                { deletedInAirtable: true }
-            );
+        for (const id of destroyed) {
+          await Response.findOneAndUpdate(
+            { airtableRecordId: id },
+            { deletedInAirtable: true }
+          );
         }
-    }
-    // res.json({ ok: true })
+      }
+
+      
+    
 })
