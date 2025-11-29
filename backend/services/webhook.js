@@ -13,7 +13,7 @@ export async function createWebhook(userId, accessToken, baseId, tableId) {
                 options: {
                     filters: {
                         dataTypes: ["tableData"],
-                        tableId
+                        // tableId
                     }
                 }
             }

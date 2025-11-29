@@ -83,7 +83,6 @@ export const createForm = asyncHandler(async (req, res, next) => {
       baseId,
       tableId
     );
-    console.log("Webhook created:", webhook.webhookId);
   }
 
   res.json({ message: "Form created", form });

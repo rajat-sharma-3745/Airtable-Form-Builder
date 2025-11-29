@@ -15,7 +15,7 @@ export const webhookHanlder = asyncHandler(async (req, res, next) => {
     if (!isValid) return next(new ApiError('Invalid signature', 401));
 
     const body = JSON.parse(req.body.toString());
-
+    console.log(body.payloads)
     for (const payload of body.payloads) {
         const { updated = [], destroyed = [] } =
             payload.records || {};
