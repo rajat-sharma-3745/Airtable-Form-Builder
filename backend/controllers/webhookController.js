@@ -22,17 +22,14 @@ export const webhookHanlder = async (req, res, next) => {
       }
       
       const webhook = await Webhook.findOne({ webhookId });
-      console.log(webhook,webhookId)
       if (!webhook) return;
       const user = await User.findById(webhook?.userId)
-      console.log(user)
       const sigHeader = req.headers["x-airtable-content-mac"];
       const isValid = verifyWebhook(
           webhook.webhookSecret,
           raw,
           sigHeader
       );
-      console.log(isValid)
       
       if (!isValid) {
           console.log("Invalid signature");
@@ -46,7 +43,6 @@ export const webhookHanlder = async (req, res, next) => {
           }
       );
      const payloads = data.payloads || [];
-     console.log(payloads)
   
   if (payloads.length === 0) {
     console.log("No payloads");
@@ -63,10 +59,12 @@ export const webhookHanlder = async (req, res, next) => {
   
   
   const tables = latest.changedTablesById || {};
+  console.log(tables)
   
   for (const tableId of Object.keys(tables)) {
     const tableChanges = tables[tableId];
   
+    console.log(tableChanges)
    
     for (const recordId of Object.keys(tableChanges.updatedRecordsById || {})) {
       const rec = tableChanges.updatedRecordsById[recordId];
