@@ -46,43 +46,38 @@ Airtable → Backend webhooks update local DB
 ### 1. Go to Airtable Developers Dashboard
 
 https://airtable.com/create/oauth
+You will get 
+```bash
+Client ID
+Client Secret
+```
 
 ### 2. Create OAuth App
 
 Add:
-
+```bash
 Authorized Redirect URI:
 https://your-frontend.com/oauth/callback
-
-Client ID
-
-Client Secret
+```
 
 ### 3. Enable Scopes:
-
+```bash
 schema.bases:read
 data.records:read
 data.records:write
+```
 
 ### 4. PKCE Flow
-
+```bash
 The backend:
-
 Generates code_verifier
-
 Generates code_challenge
-
-Stores PKCE verifier in Mongo
-
 Redirects user to Airtable
-
 Frontend receives code and state
-
 Frontend sends both to backend
-
 Backend exchanges code → tokens
-
 Backend saves user + returns JWT cookie
+```
 
 # Data Models Explanation
 
