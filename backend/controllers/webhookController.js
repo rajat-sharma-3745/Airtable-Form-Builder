@@ -70,12 +70,22 @@ export const webhookHanlder = async (req, res, next) => {
                 console.log("Latest Updated:", recordId);
                 const cellValues = rec.current.cellValuesByFieldId;
 
-                const fieldId = Object.keys(cellValues)[0];   
+                const fieldId = Object.keys(cellValues)[0];
                 const value = cellValues[fieldId];
+
+                const existing = await Response.findOne({ airtableRecordId: recordId });
+
+                const oldAnswers = existing?.answers || {};
+
+                const updatedAnswers = {
+                    ...oldAnswers,
+                    [fieldId]: value  
+                };
+
 
                 await Response.findOneAndUpdate(
                     { airtableRecordId: recordId },
-                    { answers: { ...answers, fieldId:value }, updatedAt: new Date() }
+                    { answers: updatedAnswers, updatedAt: new Date() }
                 );
             }
 
