@@ -94,7 +94,7 @@ export const webhookHanlder = async (req, res, next) => {
                 console.log(" Latest Deleted:", recordId);
 
                 await Response.findOneAndUpdate(
-                    { airtableRecordId: recordId.current.cellValuesByFieldId },
+                    { airtableRecordId: recordId },
                     { deletedInAirtable: true }
                 );
             }
