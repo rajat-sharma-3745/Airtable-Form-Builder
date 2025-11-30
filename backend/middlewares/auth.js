@@ -6,7 +6,7 @@ import User from '../models/User.js'
 export const auth = async (req, res, next) => {
     try {
         const token = req.cookies['token'];
-        if(!token) return next(new ApiError('Not authorized, no token provided',401))
+        if(!token) return next(new ApiError('Not authorized, no token provided, login again',401))
        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         if (!decoded?.id) {

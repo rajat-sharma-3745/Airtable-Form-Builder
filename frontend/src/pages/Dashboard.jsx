@@ -6,6 +6,7 @@ import axiosInstance from "../utils/axiosInstance";
 import { API_PATHS } from "../utils/apiPaths";
 import { GrStatusWarning } from "react-icons/gr";
 import { toast } from "sonner";
+import { useAppContext } from "../Context/AppContext";
 const dummyBases = [
   {
     id: "app123ABC",
@@ -26,6 +27,7 @@ const dummyBases = [
 ];
 
 const Dashboard = () => {
+  const {logout}  = useAppContext()
   const [bases, setBases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,6 +44,9 @@ const Dashboard = () => {
           error?.response?.data?.message ||
             error?.message||"Something went wrong"
         );
+        if(error?.response?.status===401){
+           logout();
+        }
       } finally {
         setLoading(false);
       }
